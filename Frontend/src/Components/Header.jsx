@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 const Header = () => {
-  const [state, setState] = useState("Login");
+  const Navigate = useNavigate();
+  const [isRegister, setiIsRegister] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
   const [userDetails, setUserDetails] = useState({
@@ -13,40 +15,75 @@ const Header = () => {
     password: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const [loginDetails, setLoginDetails] = useState({
+    email: "",
+    password: "",
+  });
 
-    setUserDetails({
-      ...userDetails,
-      [name]: value,
-    });
-    console.log(userDetails);
+  const handleChange = (e) => {
+    if (isRegister) {
+      const { name, value } = e.target;
+
+      setUserDetails({
+        ...userDetails,
+        [name]: value,
+      });
+      console.log(userDetails);
+    } else {
+      const { name, value } = e.target;
+
+      setLoginDetails({
+        ...loginDetails,
+        [name]: value,
+      });
+      console.log(loginDetails);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/v1/user/signUp",
-        userDetails,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      // endpoints
+      const endpoints = isRegister
+        ? "http://localhost:3000/api/v1/user/signUp"
+        : "http://localhost:3000/api/v1/user/login";
 
+      // payload
+      const payload = isRegister ? userDetails : loginDetails;
+
+      // send request
+      const res = await axios.post(endpoints, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       console.log(res.data);
 
       if (res.data.success) {
-        alert("User created successfully");
-        setUserDetails({
-          name: "",
-          email: "",
-          password: "",
-        });
+        alert(
+          isRegister
+            ? "User registered successfully"
+            : "User logged in successfully"
+        );
+        if (!isRegister) {
+          Navigate("/otp");
+        }
+
+        // clear fields
+        if (isRegister) {
+          setUserDetails({
+            name: "",
+            email: "",
+            password: "",
+          });
+        } else {
+          setLoginDetails({
+            email: "",
+            password: "",
+          });
+        }
       }
     } catch (error) {
       alert(error.response.data.message);
@@ -74,12 +111,12 @@ const Header = () => {
             className="p-6 border rounded-2xl bg-yellow-50 border-orange-700"
           >
             <h1 className="text-2xl font-bold text-center">
-              {state ? "Register" : "Login"}
+              {isRegister ? "Register" : "Login"}
             </h1>
             <p className="text-xl text-center mt-2">
-              {state ? "Please register here" : "Please login here"}
+              {isRegister ? "Please register here" : "Please login here"}
             </p>
-            {state && (
+            {isRegister && (
               <div className="flex flex-col mt-2">
                 <label>Name</label>
                 <input
@@ -102,7 +139,7 @@ const Header = () => {
                 type="email"
                 placeholder="Eneter your email"
                 name="email"
-                value={userDetails.email}
+                value={isRegister ? userDetails.email : loginDetails.email}
                 className="outline-none border-2  bg-white border-gray-500 rounded-xl p-2"
               />
             </div>
@@ -115,7 +152,9 @@ const Header = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Eneter your password"
                 name="password"
-                value={userDetails.password}
+                value={
+                  isRegister ? userDetails.password : loginDetails.password
+                }
                 className="outline-none border-2  bg-white border-gray-500 rounded-xl p-2"
               />
               <div className="absolute top-8 right-3">
@@ -140,15 +179,17 @@ const Header = () => {
                 type="submit"
                 className="w-full mt-4 bg-green-800 text-white p-2 rounded-xl cursor-pointer"
               >
-                {state ? "Register" : "Login"}
+                {isRegister ? "Register" : "Login"}
               </button>
               <p className="mt-2">
-                {state ? "Already have an account?" : "Don't have an account?"}
+                {isRegister
+                  ? "Already have an account?"
+                  : "Don't have an account?"}
                 <span
-                  onClick={() => setState(!state)}
+                  onClick={() => setiIsRegister(!isRegister)}
                   className="text-sky-800 cursor-pointer"
                 >
-                  {state ? " Login" : " Register"}
+                  {isRegister ? " Login" : " Register"}
                 </span>
               </p>
             </div>

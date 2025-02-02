@@ -104,3 +104,11 @@ export const logout = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const sendOtp = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
