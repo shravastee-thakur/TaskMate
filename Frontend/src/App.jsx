@@ -9,7 +9,7 @@ import IncompleteTasks from "./Pages/IncompleteTasks";
 
 function App() {
   return (
-    <div className="h-screen">
+    <div className="h-screen relative">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />

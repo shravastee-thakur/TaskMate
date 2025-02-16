@@ -21,7 +21,7 @@ const TopBar = () => {
     },
   ];
   return (
-    <div className="flex justify-between px-10 py-4 bg-orange-200">
+    <div className="flex justify-between px-10 py-4 bg-sky-800 text-white">
       <div>
         <NavLink to={"/tasks"}>
           <h1 className="text-2xl font-bold">TaskMate</h1>

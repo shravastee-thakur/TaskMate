@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import TopBar from "../Components/TopBar";
 import Card from "../Components/Card";
+import InputData from "../Components/InputData";
 
 const Tasks = () => {
+  const [input, setInput] = useState(false);
   return (
-    <div className="min h-screen">
-      <div className="bg-orange-200">
+    <div className="bg-yellow-100 min-h-screen">
+      <div>
         <TopBar />
       </div>
-      <div className="bg-amber-100 px-10">
-        <Card />
+      <div className="px-10">
+        <Card input={input} setInput={setInput} Tasks={"true"} />
       </div>
+      <InputData input={input} setInput={setInput} />
     </div>
   );
 };
