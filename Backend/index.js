@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 4000;
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoutes from "./Routes/userRoutes.js";
+import tasksRoutes from "./Routes/taskRoutes.js";
 
 // Middlewares
 app.use(express.json());
@@ -25,6 +26,9 @@ app.use(cookieParser());
 // Routes
 app.use("/api/v1/user", userRoutes);
 // http://localhost:3000/api/v1/user/signUp
+
+app.use("/api/v1/tasks", tasksRoutes);
+// http://localhost:3000/api/v1/tasks/create-task
 
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
