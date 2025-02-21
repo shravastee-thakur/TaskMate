@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 // import FavoriteIcon from "@mui/icons-material/Favorite";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import axios from "axios";
 
 const Card = ({ Tasks, input, setInput }) => {
   const tasks = [
@@ -41,6 +42,21 @@ const Card = ({ Tasks, input, setInput }) => {
 
   const [importantButton, setImportantButton] = useState("Incomplete");
 
+  const fetch = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:3000/api/v1/tasks/get-all-tasks",
+        {
+          withCredentials: true, // This ensures cookies are sent with the request
+        }
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
+  fetch();
   return (
     <div className="grid grid-cols-4 gap-8 p-4">
       {tasks &&

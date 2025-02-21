@@ -1,7 +1,9 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const TopBar = () => {
+  const Navigate = useNavigate();
   const data = [
     {
       title: "All tasks",
@@ -20,6 +22,33 @@ const TopBar = () => {
       link: "/incomplete",
     },
   ];
+
+  // Logout
+  const handleSubmit = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/user/logout",
+        {},
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      console.log(res);
+
+      if (res.data.success) {
+        alert("User logged out successfully");
+        Navigate("/");
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    
+  }, []);
+
   return (
     <div className="flex justify-between px-10 py-4 bg-sky-800 text-white">
       <div>
@@ -38,7 +67,10 @@ const TopBar = () => {
       </div>
       <div className="flex gap-8 items-center">
         <h3>Sameer</h3>
-        <button className="bg-orange-600 text-white px-4 py-1 rounded-xl">
+        <button
+          onClick={handleSubmit}
+          className="bg-orange-600 text-white px-4 py-1 rounded-xl cursor-pointer"
+        >
           Logout
         </button>
       </div>

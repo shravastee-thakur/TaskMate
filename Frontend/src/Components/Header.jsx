@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 
 const Header = () => {
   const Navigate = useNavigate();
+
   const [isRegister, setiIsRegister] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -68,7 +69,7 @@ const Header = () => {
             : "User logged in successfully"
         );
         if (!isRegister) {
-          Navigate("/otp");
+          Navigate("/tasks");
         }
 
         // clear fields

@@ -1,7 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
 
 const InputData = ({ input, setInput }) => {
+  const [data, setData] = useState({
+    title: "",
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleClick = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tasks/create-task",
+        {
+          title: data.title,
+          description: data.description,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      if (res.data.success) {
+        alert(res.data.message);
+        setData({ title: "", description: "" });
+        setInput(!input);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       {/* <div className="fixed top-0 left-0 bg-white opacity-50 h-screen w-full"></div> */}
@@ -15,19 +52,28 @@ const InputData = ({ input, setInput }) => {
               <CloseIcon />
             </button>
             <input
+              onChange={handleChange}
+              name="title"
               type="text"
+              value={data.title}
               placeholder="Enter Task Here"
               className="bg-white p-2 mt-4 rounded-xl w-full outline-none"
             />
             <textarea
+              onChange={handleChange}
+              type="text"
               name="description"
+              value={data.description}
               cols="30"
               rows="10"
               className="bg-white p-2 rounded-xl w-full outline-none mt-4"
               placeholder="Enter Description Here"
             ></textarea>
             <div className="text-center">
-              <button className="bg-orange-600 text-white rounded-xl font-semibold px-9 py-2 mt-2 cursor-pointer">
+              <button
+                onClick={handleClick}
+                className="bg-orange-600 text-white rounded-xl font-semibold px-9 py-2 mt-2 cursor-pointer"
+              >
                 Submit
               </button>
             </div>

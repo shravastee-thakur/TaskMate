@@ -11,11 +11,11 @@ import { useSelector } from "react-redux";
 function App() {
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-  useEffect(() => {
-    if (isLoggedIn === false) {
-      navigate("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (isLoggedIn === false) {
+  //     navigate("/");
+  //   }
+  // }, []);
 
   return (
     <div className="h-screen relative">
