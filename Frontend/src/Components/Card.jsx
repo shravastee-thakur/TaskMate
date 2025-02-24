@@ -6,63 +6,69 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import axios from "axios";
 
-const Card = ({ Tasks, input, setInput }) => {
-  const tasks = [
-    {
-      title: "Prepare Project Proposal",
-      description:
-        "Write and finalize the project proposal document for submission by the end of the week.",
-      status: "Completed",
-    },
-    {
-      title: "Team Meeting with Developers",
-      description:
-        "Discuss project timelines, assign responsibilities, and resolve any ongoing issues.",
-      status: "Incomplete",
-    },
-    {
-      title: "Design Landing Page",
-      description:
-        "Create a user-friendly and responsive landing page for the marketing campaign.",
-      status: "Completed",
-    },
-    {
-      title: "Test Payment Integration",
-      description:
-        "Verify that the payment gateway works correctly with test and live environments.",
-      status: "Incomplete",
-    },
-    {
-      title: "Update User Documentation",
-      description:
-        "Revise user guides to include recent UI/UX updates and new features.",
-      status: "Completed",
-    },
-  ];
+const Card = ({ Tasks, input, setInput, setUpdateData }) => {
+  const [tasks, setTasks] = useState([]);
 
-  const [importantButton, setImportantButton] = useState("Incomplete");
+  // const [importantButton, setImportantButton] = useState("Incomplete");
 
-  const fetch = async () => {
+  // get all tasks
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:3000/api/v1/tasks/get-all-tasks",
+          { withCredentials: true }
+        );
+
+        if (res.data.success) {
+          setTasks(res.data.data.tasks);
+        }
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  // edit
+  const handleEdit = async (id, title, description) => {
+    setInput(!input);
+    setUpdateData({
+      id: id,
+      title: title,
+      description: description,
+    });
+  };
+
+  // delete
+  const handleDelete = async (id) => {
     try {
-      const res = await axios.get(
-        "http://localhost:3000/api/v1/tasks/get-all-tasks",
+      const res = await axios.delete(
+        `http://localhost:3000/api/v1/tasks/delete-task/${id}`,
         {
-          withCredentials: true, // This ensures cookies are sent with the request
+          withCredentials: true,
         }
       );
-      console.log(res.data);
+
+      if (res.data.success) {
+        alert(res.data.message);
+        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
+      }
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.log(error);
     }
   };
 
-  fetch();
   return (
     <div className="grid grid-cols-4 gap-8 p-4">
-      {tasks &&
-        tasks.map((task, index) => {
+      {tasks.length > 0 &&
+        tasks.map((task) => {
           return (
-            <div key={index} className="bg-yellow-50 p-4 rounded-lg shadow-md">
+            <div
+              key={task._id}
+              className="bg-yellow-50 p-4 rounded-lg shadow-md"
+            >
               <h3 className="font-bold pb-2">{task.title}</h3>
               <p>{task.description}</p>
               <div className="flex justify-between items-center mt-4">
@@ -81,8 +87,22 @@ const Card = ({ Tasks, input, setInput }) => {
                 <div className="flex gap-2 items-center">
                   <FavoriteBorderIcon />
                   {/* <FavoriteIcon /> */}
-                  <EditIcon />
-                  <DeleteIcon />
+
+                  <button
+                    className="cursor-pointer"
+                    onClick={() =>
+                      handleEdit(task._id, task.title, task.description)
+                    }
+                  >
+                    <EditIcon />
+                  </button>
+
+                  <button
+                    className="cursor-pointer"
+                    onClick={() => handleDelete(task._id)}
+                  >
+                    <DeleteIcon />
+                  </button>
                 </div>
               </div>
             </div>

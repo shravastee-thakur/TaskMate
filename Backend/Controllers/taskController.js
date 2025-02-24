@@ -55,7 +55,7 @@ export const getAllTasks = async (req, res) => {
 
 export const deleteTask = async (req, res) => {
   try {
-    const taskId = req.params.id;
+    const taskId = req.params.id?.toString().trim();
     const userId = req.user.id;
     const user = await userModel.findById(userId);
     if (!user) {
@@ -64,8 +64,17 @@ export const deleteTask = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
+    // Remove task from user's task list
     user.tasks = user.tasks.filter((task) => task.toString() !== taskId);
     await user.save();
+
+    // Delete task from tasks collection
+    const deletedTask = await tasksModel.findByIdAndDelete(taskId);
+    if (!deletedTask) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Task not found" });
+    }
 
     res
       .status(200)
@@ -78,7 +87,7 @@ export const deleteTask = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   try {
-    const taskId = req.params.id;
+    const taskId = req.params.id?.toString().trim();
     const userId = req.user.id;
 
     const user = await userModel.findById(userId);
